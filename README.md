@@ -125,3 +125,7 @@ directly into a node parameter instead of the credentials system.
   3-day trial), which didn't fit this flow's free-text city/country pattern.
 - **Output filename**: the `Convert to File` node doesn't set a custom binary
   field name, so the email always attaches a generically named XLSX.
+
+📌 Note: This repo is a sample of a real-world automation project we
+built — shared here to showcase the workflow design, tooling (n8n + Apify),
+and integration patterns used in an actual production use case.
