@@ -1,0 +1,619 @@
+{
+  "name": "scrape prj",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "={{ $json.defaultDatasetId }}",
+        "offset": {},
+        "limit": 5,
+        "options": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        480,
+        96
+      ],
+      "id": "d7122f08-9f62-4a4c-8900-4670cd692e9c",
+      "name": "linkedIn Data",
+      "credentials": {
+        "apifyApi": {
+          "id": "5OP2HFo61tR9GJjr",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Run an Actor - Google Maps Scraper -https://console.apify.com/actors/WnMxbsRLNbPeYL6ge/input\nRun an Actor 1 - LinkedIn Profile Search Scraper - https://console.apify.com/actors/M2FMdjRVeF1HPGFcc/input (removed)\nRun as Actor 2- Facebook Search Scraper - https://console.apify.com/actors/Us34x9p7VgjCz99H6/input",
+        "height": 112,
+        "width": 1024,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1248,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "7e6768a4-1a57-4f1d-b473-5b4bf99a673b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "https://console.apify.com/actors/M2FMdjRVeF1HPGFcc/input",
+          "mode": "url"
+        },
+        "customBody": "={\n    \"autoQuerySegmentation\": false,\n    \"locations\": [\n        \"{{ $json['Country '] }}\",\n        \"{{ $json.City }}\"\n    ],\n    \"maxItems\": 5,\n    \"profileScraperMode\": \"Full + email search\",\n    \"recentlyChangedJobs\": false,\n    \"searchQuery\": \"{{ $json['Seacrh Query'] }}\"\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        224,
+        96
+      ],
+      "id": "91a6a7bb-5275-4bba-86aa-e725fa33519b",
+      "name": "Run an Actor 1",
+      "credentials": {
+        "apifyApi": {
+          "id": "5OP2HFo61tR9GJjr",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "enter the title you prefer",
+        "formDescription": "We'll get back to you soon",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "Seacrh Query",
+              "fieldLabel": "Search Query",
+              "requiredField": true
+            },
+            {
+              "fieldName": "City",
+              "fieldLabel": "City ",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Country ",
+              "fieldLabel": "Country",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Your mail ",
+              "fieldLabel": "Mail ",
+              "fieldType": "email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -2096,
+        512
+      ],
+      "id": "36a1737a-42f1-4cc3-92c6-b4a73cf4692c",
+      "name": "On form submission",
+      "webhookId": "869b6c98-1d99-4dbf-8658-e9b42806dbfa"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "89c30257-5f4a-46ef-afba-0afc5f05e64a",
+              "leftValue": "={{ $('On form submission').item.json['Your mail '] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1152,
+        704
+      ],
+      "id": "934f7ff6-ec93-42ca-89a5-82432709f3ee",
+      "name": "email filter with entries"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        464
+      ],
+      "id": "8a262f69-b27b-4c81-a673-69f5ccb6c627",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json[\"Your mail \"] }}",
+        "subject": "Your  leads are here,",
+        "emailType": "text",
+        "message": "Please find the attached leads",
+        "options": {
+          "appendAttribution": true,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        464
+      ],
+      "id": "74037b23-8c9e-4693-a6de-cc01bb3e7b0c",
+      "name": "Send mail",
+      "webhookId": "3a046343-5199-4515-8e71-5daf4417c2e1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3EZMn95m4oE9pXUm",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "={{ $json.defaultDatasetId }}",
+        "limit": 25,
+        "options": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        240
+      ],
+      "id": "f4a5d53f-1b6e-4637-b84f-0eeabdb2e1d7",
+      "name": "google maps data",
+      "credentials": {
+        "apifyApi": {
+          "id": "5OP2HFo61tR9GJjr",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "actorSource": "store",
+        "actorId": {
+          "__rl": true,
+          "value": "https://console.apify.com/actors/WnMxbsRLNbPeYL6ge/input",
+          "mode": "url"
+        },
+        "customBody": "={\n    \"language\": \"en\",\n    \"locationQuery\": \"{{ $json.City }}, {{ $json['Country '] }}\",\n    \"maxCrawledPlacesPerSearch\": 25,\n    \"searchStringsArray\": [\n        \"{{ $json['Seacrh Query'] }}\"\n    ],\n    \"skipClosedPlaces\": false\n}"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -1696,
+        240
+      ],
+      "id": "855ce7e7-11ab-405f-a215-f137c96de168",
+      "name": "Run an Actor",
+      "credentials": {
+        "apifyApi": {
+          "id": "5OP2HFo61tR9GJjr",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "https://console.apify.com/actors/Us34x9p7VgjCz99H6/input",
+          "mode": "url"
+        },
+        "customBody": "={\n    \"categories\": [\n        \"{{ $json['Seacrh Query'] }}\"\n    ],\n    \"locations\": [\n        \"{{ $json.City }}\",\n        \"{{ $json['Country '] }}\"\n    ],\n    \"resultsLimit\": 25\n} "
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -1712,
+        704
+      ],
+      "id": "a1ec79e9-76a7-415a-a522-a9df2c819f3c",
+      "name": "Run an Actor2",
+      "credentials": {
+        "apifyApi": {
+          "id": "5OP2HFo61tR9GJjr",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "={{ $json.defaultDatasetId }}",
+        "limit": 25,
+        "options": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        -1456,
+        704
+      ],
+      "id": "e250f216-c863-4a6d-8227-340ef40c1fc8",
+      "name": "Get dataset items",
+      "credentials": {
+        "apifyApi": {
+          "id": "5OP2HFo61tR9GJjr",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4cc5896c-8923-4532-9733-1d900729d8d7",
+              "name": "title",
+              "value": "={{ $('Get dataset items').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "398c3eab-342d-4c7b-90c0-08124116a5f4",
+              "name": "email",
+              "value": "={{ $('Get dataset items').item.json.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        704
+      ],
+      "id": "c3ab1a07-84d7-495f-82a6-c9b4fd74d396",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fd99f29e-26be-44da-a641-311b5e661191",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "0709afa3-c2e6-4858-b282-6ef42e53248a",
+              "name": "email",
+              "value": "={{ $json.emails }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        240
+      ],
+      "id": "ec94ecef-3dde-4952-88d9-94b96f70f5fd",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "89c30257-5f4a-46ef-afba-0afc5f05e64a",
+              "leftValue": "={{ $('On form submission').item.json['Your mail '] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1184,
+        240
+      ],
+      "id": "9f14c384-248b-4223-88fb-77b0e60abed2",
+      "name": "email filter with entries1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ec6d5e14-b625-4164-a5b2-1fa4c2c4a28a",
+              "name": "companyWebsites",
+              "value": "={{ $json.companyWebsites }}",
+              "type": "array"
+            },
+            {
+              "id": "9c30c327-70d7-4035-b86a-38163a5ff1e2",
+              "name": "emails",
+              "value": "={{ $json.emails }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        96
+      ],
+      "id": "16ab41ff-40ff-4015-91c2-b649b699a0c1",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        864,
+        96
+      ],
+      "id": "40cfd614-f8c7-45f9-8e80-d0c54f739ca0",
+      "name": "Convert to File3"
+    },
+    {
+      "parameters": {
+        "content": "why this linkedIn node removed? \nwhen we apply the company major, city and country it shows the similar workers details  not companies.\nmost of linkedin apis give worker details and bulk company details it mau cost ( we can get 3,2 day free trials ) most of them have to use by searching company name /URl",
+        "height": 176,
+        "width": 576,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -112
+      ],
+      "id": "562a6c23-a5b9-4fd3-95fe-fe5ce070d0aa",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -512,
+        480
+      ],
+      "id": "006e8b15-171f-4c06-aab6-44466b405cc6",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run an Actor 1": {
+      "main": [
+        [
+          {
+            "node": "linkedIn Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "linkedIn Data": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Run an Actor2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email filter with entries": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "google maps data": {
+      "main": [
+        [
+          {
+            "node": "email filter with entries1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor": {
+      "main": [
+        [
+          {
+            "node": "google maps data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor2": {
+      "main": [
+        [
+          {
+            "node": "Get dataset items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get dataset items": {
+      "main": [
+        [
+          {
+            "node": "email filter with entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email filter with entries1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Convert to File3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Send mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "08a0d50c-2b21-44aa-b461-408551c92efe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a9edd411cdf7f358af6bdf390899328a1850c00d811fe0f04f59c905351b3047"
+  },
+  "nodeGroups": [],
+  "id": "fQQYZaKdefFycWMk",
+  "tags": []
+}
